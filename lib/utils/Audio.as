@@ -1,0 +1,45 @@
+package utils 
+{
+	import net.flashpunk.Sfx;
+	import as3sfxr.SfxrSynth;
+	/**
+	 * ...
+	 * @author Dreauw
+	 */
+	public class Audio  {
+		private static var sfx : Sfx;
+		private static var synth:Object = { };
+		private static var stopped:Boolean = false;
+
+		static public function playMusic(file : Class, loop : Boolean = true):void {
+			if (sfx) sfx.stop();
+			sfx = new Sfx(file);
+			loop ? sfx.loop() : sfx.play()
+			if (stopped) sfx.stop();
+		}
+
+		static public function registerSound(str:String, settings:String, cache:Boolean = true):void {
+			if (synth[str]) return;
+			var tmp:SfxrSynth = new SfxrSynth;
+			tmp.params.setSettingsString(settings);
+			if (cache) tmp.cacheSound();
+			synth[str] = tmp;
+		}
+
+		static public function playSound(str:String):void {
+			if (stopped) return;
+			if (synth[str]) synth[str].play();
+		}
+
+		static public function stop():void {
+			(stopped) ? sfx.resume() : sfx.stop()
+			stopped = !stopped;
+		}
+
+		static public function resume():void {
+			sfx.resume();
+		}
+
+	}
+
+}
