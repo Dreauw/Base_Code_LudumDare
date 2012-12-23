@@ -7,6 +7,8 @@ package {
 	 * ...
 	 * @author Dreauw
 	 */
+	[SWF(backgroundColor="#202020", width="640", height="480")]
+	[Frame(factoryClass = "Preloader")]
 	public class Main extends Engine {
 		public function Main() {
 			super(640, 480, 60, false);
