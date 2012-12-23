@@ -32,12 +32,17 @@ package utils
 		}
 
 		static public function stop():void {
-			(stopped) ? sfx.resume() : sfx.stop()
-			stopped = !stopped;
+			sfx.stop()
+			stopped = true;
 		}
 
 		static public function resume():void {
 			sfx.resume();
+			stopped = false;
+		}
+		
+		static public function mute():void {
+			(stopped) ? resume() : stop()
 		}
 
 	}
