@@ -2,16 +2,15 @@ package {
 	import net.flashpunk.FP;
 	import net.flashpunk.Engine;
 	import net.flashpunk.utils.Key;
-	import flash.system.Capabilities;
 	
 	/**
 	 * ...
 	 * @author Dreauw
 	 */
-	dynamic public class Main extends Engine {
+	public class Main extends Engine {
 		public function Main() {
 			super(640, 480, 60, false);
-			if (Capabilities.isDebugger) {
+			if (new Error().getStackTrace().search(/:[0-9]+]$/m) > -1) {
 				FP.console.enable();
 				FP.console.toggleKey = Key.F1;
 			}
