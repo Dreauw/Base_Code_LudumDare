@@ -73,15 +73,16 @@
 		{
 			// render the entities in order of depth
 			var e:Entity,
-				i:int = _layerList.length;
-			while (i --)
+				i:int = 0;
+			while (i < _layerList.length)
 			{
-				e = _renderLast[_layerList[i]];
+				e = _renderFirst[_layerList[i]];
 				while (e)
 				{
 					if (e.visible) e.render();
-					e = e._renderPrev;
+					e = e._renderNext;
 				}
+				i++
 			}
 		}
 		
@@ -1026,13 +1027,14 @@
 		/** @private Adds Entity to the render list. */
 		internal function addRender(e:Entity):void
 		{
-			var f:Entity = _renderFirst[e._layer];
+			var f:Entity = _renderLast[e._layer];
 			if (f)
 			{
 				// Append entity to existing layer.
-				e._renderNext = f;
-				f._renderPrev = e;
+				e._renderPrev = f;
+				f._renderNext = e;
 				_layerCount[e._layer] ++;
+				_renderLast[e._layer] = e;
 			}
 			else
 			{
@@ -1040,11 +1042,9 @@
 				_renderLast[e._layer] = e;
 				_layerList[_layerList.length] = e._layer;
 				_layerSort = true;
-				e._renderNext = null;
 				_layerCount[e._layer] = 1;
+				_renderFirst[e._layer] = e;
 			}
-			_renderFirst[e._layer] = e;
-			e._renderPrev = null;
 		}
 		
 		/** @private Removes Entity from the render list. */
