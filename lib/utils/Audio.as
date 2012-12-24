@@ -32,12 +32,12 @@ package utils
 		}
 
 		static public function stop():void {
-			sfx.stop()
+			if (sfx) sfx.stop()
 			stopped = true;
 		}
 
 		static public function resume():void {
-			sfx.resume();
+			if (sfx) sfx.resume();
 			stopped = false;
 		}
 		
