@@ -2,6 +2,7 @@ package net.flashpunk.graphics
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.filters.BitmapFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -110,7 +111,7 @@ package net.flashpunk.graphics
 			_point.y = point.y + y - originY - camera.y * scrollY;
 			
 			// render without transformation
-			if (angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend)
+			if (_bitmap.filters.length == 0 && angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend)
 			{
 				target.copyPixels(_buffer, _bufferRect, _point, null, null, true);
 				return;
@@ -314,6 +315,35 @@ package net.flashpunk.graphics
 			// no early exit because the BitmapData contents might have changed
 			_drawMask = value;
 			updateBuffer(true);
+		}
+		
+		/**
+		 * Apply filter on the Image.
+		 */
+		public function applyFilter(filter:BitmapFilter):void {
+			var rect:Rectangle = new Rectangle(0, 0, FP.screen.width, FP.screen.height);
+			rect = _source.generateFilterRect(rect, filter);
+			rect.width = (rect.width + Math.abs(rect.x) > _sourceRect.width) ? rect.width + Math.abs(rect.x) : _sourceRect.width;
+			rect.height = (rect.height + Math.abs(rect.y) > _sourceRect.height) ? rect.height + Math.abs(rect.y) : _sourceRect.height;
+			var b:BitmapData = new BitmapData(rect.width, rect.height, true, 0);
+			b.copyPixels(_source, _sourceRect, new Point(Math.abs(rect.x*2), Math.abs(rect.y*2)));
+			this.x += rect.x * 2;
+			this.y += rect.y * 2;
+			rect.x = rect.y = 0;
+			b.applyFilter(b, rect, FP.zero, filter);
+			_sourceRect = _bufferRect = rect;
+			_source = b;
+			createBuffer();
+			updateBuffer(true);
+		}
+		
+		/**
+		 * Set the filters of the Image.
+		 */
+		public function get filters():Array { return _bitmap.filters; }
+		public function set filters(value:Array):void
+		{
+			_bitmap.filters = value;
 		}
 		
 		/**
