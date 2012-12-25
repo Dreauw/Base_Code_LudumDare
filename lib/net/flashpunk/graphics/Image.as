@@ -332,6 +332,8 @@ package net.flashpunk.graphics
 			rect.x = rect.y = 0;
 			b.applyFilter(b, rect, FP.zero, filter);
 			_sourceRect = _bufferRect = rect;
+			_source.dispose();
+			_source = null;
 			_source = b;
 			createBuffer();
 			updateBuffer(true);
