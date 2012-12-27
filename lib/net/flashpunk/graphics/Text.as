@@ -1,6 +1,8 @@
 ﻿package net.flashpunk.graphics 
 {
 	import flash.display.BitmapData;
+	import flash.filters.BitmapFilter;
+	import flash.filters.GlowFilter;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextLineMetrics;
@@ -46,6 +48,16 @@
 		public static var resizable: Boolean = true;
 		
 		/**
+		 * The outline color property to assign to new Text objects.
+		 */
+		public static var outlineColor: uint = 0;
+		
+		/**
+		 * The outline size property to assign to new Text objects.
+		 */
+		public static var outlineSize: uint = 0;
+		
+		/**
 		 * If the text field can automatically resize if its contents grow.
 		 */
 		public var resizable: Boolean;
@@ -82,6 +94,8 @@
 			_leading = Text.defaultLeading;
 			_wordWrap = Text.wordWrap;
 			resizable = Text.resizable;
+			var _outlineColor:uint = Text.outlineColor;
+			var _outlineSize:uint = Text.outlineSize;
 			var width:uint = 0;
 			var height:uint = h;
 			
@@ -101,6 +115,8 @@
 					if (options.hasOwnProperty("resizable")) resizable = options.resizable;
 					if (options.hasOwnProperty("width")) width = options.width;
 					if (options.hasOwnProperty("height")) height = options.height;
+					if (options.hasOwnProperty("outlineColor")) _outlineColor = options.outlineColor;
+					if (options.hasOwnProperty("outlineSize")) _outlineSize = options.outlineSize+1;
 				}
 			}
 			
@@ -118,7 +134,6 @@
 			updateTextBuffer();
 			this.x = x;
 			this.y = y;
-			
 			if (options)
 			{
 				for (var property:String in options) {
@@ -450,6 +465,58 @@
 			updateTextBuffer();
 		}
 		
+		
+		/**
+		 * Outline size of the text.
+		 */
+		private function filterOutline(item:BitmapFilter, index:int, array:Array):Boolean {return (item != _outlineFilter);}
+		public function get outlineSize():uint { return (_outlineFilter ? _outlineFilter.blurX-1 : Text.outlineSize); }
+		public function set outlineSize(value:uint):void
+		{
+			if (_outlineFilter && value + 1 == _outlineFilter.blurX) return;
+			if (value < 1) {
+				if (_outlineFilter && _filters.length > 0) {
+					_filters = this.filters;
+				}
+				_outlineFilter = null;
+				this.filters = _filters;
+				return;
+			}
+			if (!_outlineFilter) {
+				_outlineFilter = new GlowFilter(Text.outlineColor, 1, value + 1, value + 1, (value + 1) * 4);
+				this.filters = [_outlineFilter].concat(this.filters);
+				return;
+			}
+			_outlineFilter.blurX = (value + 1);
+			_outlineFilter.blurY = (value + 1);
+			_outlineFilter.strength = (value + 1) * 4;
+			this.filters = this.filters;
+		}
+		
+		/**
+		 * Outline color of the text.
+		 */
+		public function get outlineColor():uint { return (_outlineFilter ? _outlineFilter.color : Text.outlineColor); }
+		public function set outlineColor(value:uint):void
+		{
+			if (_outlineFilter && value == _outlineFilter.color) return;
+			if (!_outlineFilter) {
+				_outlineFilter = new GlowFilter(value, 1, Text.outlineSize, Text.outlineSize, Text.outlineSize * 4);
+				this.filters = [_outlineFilter].concat(this.filters);
+				return;
+			}
+			_outlineFilter.color = value;
+			updateTextBuffer();
+		}
+		
+		/**
+		 * Hide outline filter.
+		 */
+		override public function get filters():Array {return super.filters.filter(filterOutline);}
+		override public function set filters(value:Array):void {
+			super.filters = (_outlineFilter ? [_outlineFilter].concat(value) : value);
+		}
+		
 		/**
 		 * The scaled width of the text image.
 		 */
@@ -484,6 +551,7 @@
 		/** @protected */ protected var _align:String;
 		/** @protected */ protected var _leading:Number;
 		/** @protected */ protected var _wordWrap:Boolean;
+		/** @protected */ protected var _outlineFilter:GlowFilter;
 		
 		// Default font family.
 		// Use this option when compiling with Flex SDK 3 or lower
