@@ -176,7 +176,7 @@
 		private static var _styleFrom:Vector.<int> = new Vector.<int>;
 		private static var _styleTo:Vector.<int> = new Vector.<int>;
 		
-		private function matchStyles():void
+		protected function matchStyles():void
 		{
 			var i:int, j:int;
 			
