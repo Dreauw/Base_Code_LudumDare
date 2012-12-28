@@ -2,6 +2,7 @@ package net.flashpunk.graphics
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Shape;
 	import flash.filters.BitmapFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
@@ -169,6 +170,20 @@ package net.flashpunk.graphics
 			image.color = color;
 			image.alpha = alpha;
 			
+			return image;
+		}
+		
+		
+		/**
+		 * Creates a new Image based on a Shape.
+		 * @param	shape		Shape to draw.
+		 * @return	A new Image object.
+		 */
+		public static function createFromShape(shape:Shape):Image
+		{
+			var data:BitmapData = new BitmapData(shape.width, shape.height, true, 0);
+			data.draw(shape);
+			var image:Image = new Image(data);
 			return image;
 		}
 		
