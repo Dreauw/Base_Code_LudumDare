@@ -298,7 +298,6 @@
 					true, 0);
 				
 				_sourceRect = _source.rect;
-				createBuffer();
 			}
 			else
 			{
@@ -320,7 +319,7 @@
 					break;
 				}
 			}
-			
+			if (_filters) this.filters = this.filters
 			if (offsetRequired) {
 				for (i = 0; i < _field.numLines; i++) {
 					tlm = _field.getLineMetrics(i);
