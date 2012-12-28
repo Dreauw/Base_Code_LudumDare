@@ -329,6 +329,7 @@ package net.flashpunk.graphics
 		public function get filters():Array { return (_filters ? _filters : _bitmap.filters); }
 		public function set filters(value:Array):void
 		{
+			if (!value) return;
 			if (angle != 0 || scaleX * scale != 1 || scaleY * scale != 1 || blend) {
 				_bitmap.filters = value;
 				_filters = null;

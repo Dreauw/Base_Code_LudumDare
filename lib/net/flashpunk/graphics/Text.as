@@ -116,7 +116,7 @@
 					if (options.hasOwnProperty("width")) width = options.width;
 					if (options.hasOwnProperty("height")) height = options.height;
 					if (options.hasOwnProperty("outlineColor")) _outlineColor = options.outlineColor;
-					if (options.hasOwnProperty("outlineSize")) _outlineSize = options.outlineSize+1;
+					if (options.hasOwnProperty("outlineSize")) _outlineSize = options.outlineSize;
 				}
 			}
 			
@@ -483,7 +483,7 @@
 			}
 			if (!_outlineFilter) {
 				_outlineFilter = new GlowFilter(Text.outlineColor, 1, value + 1, value + 1, (value + 1) * 4);
-				this.filters = [_outlineFilter].concat(this.filters);
+				this.filters = this.filters;
 				return;
 			}
 			_outlineFilter.blurX = (value + 1);
@@ -501,7 +501,7 @@
 			if (_outlineFilter && value == _outlineFilter.color) return;
 			if (!_outlineFilter) {
 				_outlineFilter = new GlowFilter(value, 1, Text.outlineSize, Text.outlineSize, Text.outlineSize * 4);
-				this.filters = [_outlineFilter].concat(this.filters);
+				this.filters = this.filters;
 				return;
 			}
 			_outlineFilter.color = value;
