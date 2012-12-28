@@ -352,10 +352,12 @@ package net.flashpunk.graphics
 				rect.x += _filtersPoint.x;
 				rect.y = Math.abs(rect.y);
 				rect.y += _filtersPoint.y;
-				_filtersPoint = new Point(rect.x , rect.y);
+				_filtersPoint = new Point(rect.x, rect.y);
 				rect.x = rect.y = 0;
-				_bufferRect = _sourceRect = rect;
-				createBuffer();
+				if (rect.width > _bufferRect.width || rect.height > _bufferRect.height) {
+					_bufferRect = _sourceRect = rect;
+					createBuffer();
+				}
 			}
 			this.x += -_filtersPoint.x;
 			this.y += -_filtersPoint.y;
