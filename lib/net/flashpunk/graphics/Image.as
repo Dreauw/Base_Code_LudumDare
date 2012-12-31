@@ -445,6 +445,13 @@ package net.flashpunk.graphics
 		}
 		
 		/**
+		 * Dispose the image.
+		 */
+		public function dispose():void {
+			if (_buffer) _buffer.dispose();
+		}
+		
+		/**
 		 * True if the image is locked.
 		 */
 		public function get locked():Boolean { return _locked; }
