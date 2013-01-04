@@ -112,7 +112,7 @@ package net.flashpunk.graphics
 			_point.y = point.y + y - originY - camera.y * scrollY;
 			
 			// render without transformation
-			if (_bitmap.filters.length == 0 && angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend)
+			if (angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend)
 			{
 				target.copyPixels(_buffer, _bufferRect, _point, null, null, true);
 				return;
@@ -202,12 +202,7 @@ package net.flashpunk.graphics
 			if (clearBefore) _buffer.fillRect(_bufferRect, 0);
 			_buffer.copyPixels(_source, _sourceRect, _filtersPoint, _drawMask, FP.zero);
 			if (_tint) _buffer.colorTransform(_bufferRect, _tint);
-			if (_filters && _filters.length > 0) {
-				for (var i:int = 0; i < _filters.length; i++) {
-					_buffer.applyFilter(_buffer, _sourceRect, FP.zero, _filters[i]);
-				}
-				
-			}
+			if (angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend && (_bitmap.filters)) _buffer.draw(_bitmap);
 		}
 		
 		/**
@@ -362,42 +357,28 @@ package net.flashpunk.graphics
 		/**
 		 * Set the filters of the Image.
 		 */
-		public function get filters():Array { return (_filters ? _filters : _bitmap.filters); }
-		public function set filters(value:Array):void
-		{
-			if (!value) return;
-			if (angle != 0 || scaleX * scale != 1 || scaleY * scale != 1 || blend) {
-				_bitmap.filters = value;
-				_filters = null;
-				return;
-			}
-			if (_filters && _filters.length > 0) {
-				_sourceRect = _bufferRect = source.rect;
-				this.x += _filtersPoint.x;
-				this.y += _filtersPoint.y;
-				_filtersPoint = FP.zero;
-				createBuffer();
-				updateBuffer();
-			}
-			_filters = value;
-			for (var i:int = 0; i < value.length; i++) {
+		public function get filters():Array { return  _bitmap.filters;}
+		public function set filters(value:Array):void {
+			var realFilters:Array = new Array();
+			this.x += _filtersPoint.x
+			this.y += _filtersPoint.y
+			_bitmap.filters = [];
+			_filtersPoint = new Point(0, 0);
+			for each(var filter:BitmapFilter in value) {
 				var rect:Rectangle = new Rectangle(0, 0, FP.screen.width, FP.screen.height);
-				rect = _buffer.generateFilterRect(rect, _filters[i]);
-				rect.width = (rect.width > _sourceRect.width) ? rect.width: _sourceRect.width;
-				rect.height = (rect.height > _sourceRect.height) ? rect.height : _sourceRect.height;
-				rect.x = Math.abs(rect.x);
-				rect.x += _filtersPoint.x;
-				rect.y = Math.abs(rect.y);
-				rect.y += _filtersPoint.y;
-				_filtersPoint = new Point(rect.x, rect.y);
+				rect = _buffer.generateFilterRect(rect, filter);
+				_filtersPoint.x += -rect.x;
+				_filtersPoint.y += -rect.y;
 				rect.x = rect.y = 0;
-				if (rect.width > _bufferRect.width || rect.height > _bufferRect.height) {
-					_bufferRect = _sourceRect = rect;
-					createBuffer();
-				}
+				_bufferRect = _sourceRect = rect;
+				createBuffer();
+				
+				realFilters.push(filter);
+				_bitmap.filters = realFilters;
+				_buffer.draw(_bitmap);
 			}
-			this.x += -_filtersPoint.x;
-			this.y += -_filtersPoint.y;
+			this.x += -_filtersPoint.x
+			this.y += -_filtersPoint.y
 			updateBuffer(true);
 		}
 		
