@@ -328,6 +328,27 @@ package net.flashpunk.graphics
 		}
 		
 		/**
+		 * Apply horizontal/vertical flip on the Image.
+		 * Faster than setting scaleX to -1 if your image isn't transformed.
+		 * Less memory consumed than using flipped.
+		 */
+		public function applyFlip(horizontal:Boolean = true):void {
+			var temp:BitmapData = _source;
+			FP.matrix.identity();
+			if (horizontal) {
+				FP.matrix.a = -1;
+				FP.matrix.tx = _source.width;
+			} else {
+				FP.matrix.a = 1;
+				FP.matrix.d = -1;
+				FP.matrix.ty = _source.height;
+			}
+			_source = new BitmapData(_source.width, _source.height, true, 0);
+			_source.draw(temp, FP.matrix);
+			updateBuffer();
+		}
+		
+		/**
 		 * Set the transparency mask of the Image.
 		 */
 		public function get drawMask():BitmapData { return _drawMask; }
