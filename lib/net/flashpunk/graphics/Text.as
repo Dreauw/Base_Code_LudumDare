@@ -476,10 +476,10 @@
 				this.filters = [];
 				return;
 			}
-			if (!_outlineFilter) _outlineFilter = new GlowFilter(Text.outlineColor, 1, Text.outlineSize + 1, Text.outlineSize + 1, (smooth ? 20 : (Text.outlineSize + 1)*4));
+			if (!_outlineFilter) _outlineFilter = new GlowFilter(Text.outlineColor, 1, Text.outlineSize + 1, Text.outlineSize + 1, (smooth ? (Text.outlineSize + 1)*4 : 20));
 			_outlineFilter.blurX = value + 1;
 			_outlineFilter.blurY = value + 1;
-			_outlineFilter.strength = (smooth ? 20 : (value + 1) * 4);
+			_outlineFilter.strength = (smooth ? (value + 1) * 4 : 20);
 			this.filters = [_outlineFilter];
 			updateTextBuffer();
 		}
