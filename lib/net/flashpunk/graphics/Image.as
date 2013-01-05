@@ -4,6 +4,7 @@ package net.flashpunk.graphics
 	import flash.display.BitmapData;
 	import flash.display.Shape;
 	import flash.filters.BitmapFilter;
+	import flash.filters.GlowFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -202,7 +203,7 @@ package net.flashpunk.graphics
 			if (clearBefore) _buffer.fillRect(_bufferRect, 0);
 			_buffer.copyPixels(_source, _sourceRect, _filtersPoint, _drawMask, FP.zero);
 			if (_tint) _buffer.colorTransform(_bufferRect, _tint);
-			if (angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend && (_bitmap.filters)) _buffer.draw(_bitmap);
+			if (angle == 0 && scaleX * scale == 1 && scaleY * scale == 1 && !blend && _bitmap.filters) _buffer.draw(_bitmap); 
 		}
 		
 		/**
@@ -359,11 +360,11 @@ package net.flashpunk.graphics
 		 */
 		public function get filters():Array { return  _bitmap.filters;}
 		public function set filters(value:Array):void {
-			var realFilters:Array = new Array();
 			this.x += _filtersPoint.x
 			this.y += _filtersPoint.y
-			_bitmap.filters = [];
+			_bitmap.filters = new Array();
 			_filtersPoint = new Point(0, 0);
+			var realFilters:Array = new Array();
 			for each(var filter:BitmapFilter in value) {
 				var rect:Rectangle = new Rectangle(0, 0, FP.screen.width, FP.screen.height);
 				rect = _buffer.generateFilterRect(rect, filter);
@@ -372,11 +373,10 @@ package net.flashpunk.graphics
 				rect.x = rect.y = 0;
 				_bufferRect = _sourceRect = rect;
 				createBuffer();
-				
 				realFilters.push(filter);
-				_bitmap.filters = realFilters;
 				_buffer.draw(_bitmap);
 			}
+			_bitmap.filters = realFilters.concat();
 			this.x += -_filtersPoint.x
 			this.y += -_filtersPoint.y
 			updateBuffer(true);
