@@ -298,6 +298,7 @@
 					true, 0);
 				
 				_sourceRect = _source.rect;
+				createBuffer();
 			}
 			else
 			{
@@ -319,7 +320,7 @@
 					break;
 				}
 			}
-			if (_filters) this.filters = this.filters
+			
 			if (offsetRequired) {
 				for (i = 0; i < _field.numLines; i++) {
 					tlm = _field.getLineMetrics(i);
@@ -343,8 +344,8 @@
 		/** @private Centers the Text's originX/Y to its center. */
 		override public function centerOrigin():void 
 		{
-			originX = _width / 2;
-			originY = _height / 2;
+			originX = textWidth / 2;
+			originY = textHeight / 2;
 		}
 		
 		/**
