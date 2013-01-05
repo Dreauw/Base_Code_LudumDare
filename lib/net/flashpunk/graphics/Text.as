@@ -468,28 +468,19 @@
 		/**
 		 * Outline size of the text.
 		 */
-		private function filterOutline(item:BitmapFilter, index:int, array:Array):Boolean {return (item != _outlineFilter);}
 		public function get outlineSize():uint { return (_outlineFilter ? _outlineFilter.blurX-1 : Text.outlineSize); }
 		public function set outlineSize(value:uint):void
 		{
-			if (_outlineFilter && value + 1 == _outlineFilter.blurX) return;
-			if (value < 1) {
-				if (_outlineFilter && _filters.length > 0) {
-					_filters = this.filters;
-				}
-				_outlineFilter = null;
-				this.filters = _filters;
+			if (value == 0) {
+				this.filters = [];
 				return;
 			}
-			if (!_outlineFilter) {
-				_outlineFilter = new GlowFilter(Text.outlineColor, 1, value + 1, value + 1, (value + 1) * 4);
-				this.filters = this.filters;
-				return;
-			}
-			_outlineFilter.blurX = (value + 1);
-			_outlineFilter.blurY = (value + 1);
-			_outlineFilter.strength = (value + 1) * 4;
-			this.filters = this.filters;
+			if (!_outlineFilter) _outlineFilter = new GlowFilter(Text.outlineColor, 1, Text.outlineSize + 1, Text.outlineSize + 1, (smooth ? 20 : (Text.outlineSize + 1)*4));
+			_outlineFilter.blurX = value + 1;
+			_outlineFilter.blurY = value + 1;
+			_outlineFilter.strength = (smooth ? 20 : (value + 1) * 4);
+			this.filters = [_outlineFilter];
+			updateTextBuffer();
 		}
 		
 		/**
@@ -498,22 +489,10 @@
 		public function get outlineColor():uint { return (_outlineFilter ? _outlineFilter.color : Text.outlineColor); }
 		public function set outlineColor(value:uint):void
 		{
-			if (_outlineFilter && value == _outlineFilter.color) return;
-			if (!_outlineFilter) {
-				_outlineFilter = new GlowFilter(value, 1, Text.outlineSize, Text.outlineSize, Text.outlineSize * 4);
-				this.filters = this.filters;
-				return;
-			}
+			if (!_outlineFilter) _outlineFilter = new GlowFilter(Text.outlineColor, 1, Text.outlineSize + 1, Text.outlineSize + 1, (smooth ? 20 : (Text.outlineSize + 1)*4));
 			_outlineFilter.color = value;
+			this.filters = [_outlineFilter];
 			updateTextBuffer();
-		}
-		
-		/**
-		 * Hide outline filter.
-		 */
-		override public function get filters():Array {return super.filters.filter(filterOutline);}
-		override public function set filters(value:Array):void {
-			super.filters = (_outlineFilter ? [_outlineFilter].concat(value) : value);
 		}
 		
 		/**
