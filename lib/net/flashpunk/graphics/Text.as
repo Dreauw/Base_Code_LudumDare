@@ -517,7 +517,7 @@
 		public function get textHeight():uint { return _textHeight; }
 		
 		// Text information.
-		/** @protected */ protected var _field:TextField = new TextField;
+		/** @protected */ public var _field:TextField = new TextField;
 		/** @protected */ protected var _width:uint;
 		/** @protected */ protected var _height:uint;
 		/** @protected */ protected var _textWidth:uint;
