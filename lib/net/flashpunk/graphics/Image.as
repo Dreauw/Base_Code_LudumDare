@@ -383,6 +383,13 @@ package net.flashpunk.graphics
 		}
 		
 		/**
+		 * Get color of a pixel from the Image.
+		 */
+		public function getPixel(x:int, y:int) : uint {
+			return _buffer.getPixel(x, y);
+		}
+		
+		/**
 		 * Centers the Image's originX/Y to its center.
 		 */
 		public function centerOrigin():void
