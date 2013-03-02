@@ -67,6 +67,7 @@
 			_g = uint((_startG + _rangeG * _t) * 255);
 			_b = uint((_startB + _rangeB * _t) * 255);
 			color = _r << 16 | _g << 8 | _b;
+			if (image) image.color = color;
 		}
 		
 		/**

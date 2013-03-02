@@ -1,5 +1,6 @@
 ﻿package net.flashpunk 
 {
+	import net.flashpunk.graphics.Image;
 	/**
 	 * Base class for all Tween objects, can be added to any Core-extended classes.
 	 */
@@ -29,6 +30,11 @@
 		 * Tween completion callback.
 		 */
 		public var complete:Function;
+		
+		/**
+		 * Tween on the image if possible.
+		 */
+		public var image:Image;
 		
 		/**
 		 * Constructor. Specify basic information about the Tween.

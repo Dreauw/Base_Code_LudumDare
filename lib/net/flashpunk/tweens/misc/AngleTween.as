@@ -49,6 +49,7 @@
 			super.update();
 			angle = (_start + _range * _t) % 360;
 			if (angle < 0) angle += 360;
+			if (image) image.angle = angle;
 		}
 		
 		// Tween information.
