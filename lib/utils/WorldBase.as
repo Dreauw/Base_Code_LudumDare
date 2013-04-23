@@ -11,43 +11,40 @@ package utils {
 
 	public class WorldBase extends World {
 		private var _classToGo:Class;
-		private var inTransition:Boolean = false;
-		private var transitionTypeIn:Boolean = false;
-		private var transitionX:Number = 0;
+		private var _func:Function;
+		protected var inTransition:Boolean = false;
+		private var fadeAlpha:Number = 0;
+		private var fadeIn:Boolean = false;
 		
 		public function switchWorld(classToGo:Class):void {
 			_classToGo = classToGo;
-			transitionOut();
+			if (inTransition) return;
+			transitionIn();
+		}
+		
+		public function executeTransition(func:Function = null) : void {
+			if (inTransition) return;
+			transitionIn();
+			_func = func;
 		}
 		
 		public function transitionOut():void {
 			inTransition = true;
-			transitionTypeIn = true;
-			transitionX = -(FP.screen.width / FP.screen.scale);
-			transitionX -= (FP.screen.width / FP.screen.scale)/2;
+			fadeIn = false;
+			fadeAlpha = 255;
 		}
 		
 		public function transitionIn():void {
-			transitionTypeIn = !(inTransition = true);
-			transitionX = -(FP.screen.width / FP.screen.scale)/2;
+			inTransition = true;
+			fadeIn = true;
+			fadeAlpha = 0;
 		}
 		
 		
 		override public function update():void {
 			super.update();
+			if (inTransition) fadeAlpha += (fadeIn ?  12.75 : -12.75);
 			if (Input.released(Key.M)) Audio.mute();
-			if (inTransition) {
-				transitionX += FP.elapsed * 230;
-				if (transitionTypeIn && transitionX >= 0) {
-					if (_classToGo) {
-						var worldTo:WorldBase = new _classToGo();
-						FP.world = worldTo;
-						worldTo.transitionIn();
-					} else {
-						transitionIn();
-					}
-				}
-			}
 		}
 		
 		override public function focusGained():void {
@@ -68,25 +65,18 @@ package utils {
 		override public function render():void {
 			super.render();
 			if (inTransition) {
-				var bd:BitmapData = new BitmapData((FP.screen.width/FP.screen.scale)+(FP.screen.width/FP.screen.scale)/2, (FP.screen.height/FP.screen.scale), true, 0);
-				var transitionNbr:uint = 10;
-				var tWidth:uint = Math.round((FP.screen.width / FP.screen.scale) / 2 / transitionNbr);
-				var i:uint = 1;
-				var col:uint;
-				if (transitionTypeIn) {
-					bd.fillRect(new Rectangle(0, 0, (FP.screen.width/FP.screen.scale), (FP.screen.height/FP.screen.scale)), 0xFF000000);
-					for (i = 1; i < transitionNbr; i += 1) {
-						col = ( (255 - (255/transitionNbr)*i) << 24) | ( 0 << 16 ) | ( 0 << 8 ) | 0;
-						bd.fillRect(new Rectangle((FP.screen.width/FP.screen.scale)+tWidth*(i-1), 0, tWidth, (FP.screen.height/FP.screen.scale)), col);
-					}
-				} else {
-					bd.fillRect(new Rectangle((FP.screen.width/FP.screen.scale)/2, 0, (FP.screen.width/FP.screen.scale), (FP.screen.height/FP.screen.scale)), 0xFF000000);
-					for (i = 1; i <= transitionNbr; i += 1) {
-						col = ( ((255 / transitionNbr) * i) << 24) | ( 0 << 16 ) | ( 0 << 8 ) | 0;
-						bd.fillRect(new Rectangle(tWidth*(i-1), 0, tWidth, (FP.screen.height/FP.screen.scale)), col);
+				var bd:BitmapData = new BitmapData((FP.screen.width / FP.screen.scale), (FP.screen.height / FP.screen.scale), true, fadeAlpha<<24);
+				FP.buffer.copyPixels(bd, bd.rect, new Point(0, 0));
+				if (fadeAlpha >= 255) {
+					transitionOut();
+					if (_func != null) _func.call();
+					if (_classToGo) {
+						var worldTo:WorldBase = new _classToGo();
+						FP.world = worldTo;
+						worldTo.transitionOut();
 					}
 				}
-				FP.buffer.copyPixels(bd, bd.rect, new Point(transitionX, 0));
+				if (fadeAlpha <= 0) inTransition = false;
 			}
 			
 			if (!FP.focused) {
