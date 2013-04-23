@@ -36,6 +36,7 @@
 		{
 			if (source is Class) _source = FP.getBitmap(source);
 			else if (source is BitmapData) _source = source;
+			else if (source is Image) _source = (source as Image)._buffer;
 			if (!_source) throw new Error("Invalid source image.");
 			_width = _source.width;
 			_height = _source.height;
@@ -119,7 +120,7 @@
 				}
 				
 				// get frame
-				rect.x = rect.width * type._frames[uint(td * type._frameCount)];
+				rect.x = rect.width * type._frames[uint(p._time / type._speed) % type._frameCount];
 				rect.y = uint(rect.x / type._width) * rect.height;
 				rect.x %= type._width;
 				
@@ -202,6 +203,12 @@
 		public function setAlpha(name:String, start:Number = 1, finish:Number = 0, ease:Function = null):ParticleType
 		{
 			return (_types[name] as ParticleType).setAlpha(start, finish, ease);
+		}
+		
+		
+		public function setAnimation(name:String, speed:Number):ParticleType
+		{
+			return (_types[name] as ParticleType).setAnimation(speed);
 		}
 		
 		/**

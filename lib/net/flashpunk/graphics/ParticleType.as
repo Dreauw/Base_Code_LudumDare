@@ -102,6 +102,12 @@
 			return this;
 		}
 		
+		public function setAnimation(speed:Number = 0):ParticleType
+		{
+			_speed = speed;
+			return this;
+		}
+		
 		/**
 		 * Sets the color range of this particle type.
 		 * @param	start		The starting color.
@@ -139,6 +145,7 @@
 		/** @private */ internal var _frame:Rectangle;
 		/** @private */ internal var _frames:Array;
 		/** @private */ internal var _frameCount:uint;
+		/** @private */ internal var _speed:Number;
 		
 		// Motion information.
 		/** @private */ internal var _angle:Number;
