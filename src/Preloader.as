@@ -103,8 +103,8 @@ package
 
 		private function checkFrame(e:Event):void {
 			if (currentFrame == totalFrames) {
-				//stop();
-				//loadingFinished();
+				stop();
+				loadingFinished();
 			}
 		}
 
