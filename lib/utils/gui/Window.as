@@ -5,7 +5,7 @@ package utils.gui {
 	import flash.filters.GlowFilter;
 	import net.flashpunk.graphics.Text;
 	public class Window extends Entity {
-		private var text:Text;
+		protected var text:Text;
 		private var color:uint;
 		private const ALPHA : Number = 0.3;
 		private var image:Image;
