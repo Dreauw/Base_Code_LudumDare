@@ -10,6 +10,7 @@ package utils
 		private static var sfx : Sfx;
 		private static var synth:Object = { };
 		private static var stopped:Boolean = false;
+		private static var muted:Boolean = false;
 
 		static public function playMusic(file : Class, loop : Boolean = true):void {
 			if (sfx) sfx.stop();
@@ -37,11 +38,13 @@ package utils
 		}
 
 		static public function resume():void {
+			if (muted) return;
 			if (sfx) sfx.resume();
 			stopped = false;
 		}
 		
 		static public function mute():void {
+			muted = !muted;
 			(stopped) ? resume() : stop()
 		}
 
