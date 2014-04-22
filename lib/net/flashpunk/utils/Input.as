@@ -138,6 +138,24 @@
 		}
 		
 		/**
+		 * Get the number of input of this key since the last time
+		 * @param	input An input name to check for
+		 * @param	interval The interval of time between each input
+		 * @return The number of time the input was pressed
+		 */
+		public static function nbCheck(input:String, interval:Number = 0.016):int
+		{
+			if (Input.check(input)) {
+				if (!_inputTime[input]) _inputTime[input] = 0;
+				_inputTime[input] += FP.elapsed;
+				var nb:int = Math.floor(_inputTime[input] / interval);
+				_inputTime[input] %= interval;
+				return nb;
+			}
+			return 0;
+		}
+		
+		/**
 		 * If the input or key was pressed this frame.
 		 * @param	input		An input name or key to check for.
 		 * @return	True or false.
@@ -167,6 +185,7 @@
 		{
 			if (input is String)
 			{
+				if (_inputTime[input]) _inputTime[input] = 0;
 				if (! _control[input]) return false;
 				var v:Vector.<int> = _control[input],
 					i:int = v.length;
@@ -330,5 +349,6 @@
 		/** @private */ private static var _control:Object = {};
 		/** @private */ private static var _mouseWheelDelta:int = 0;
 		/** @private */ private static var _mouseVisible:Boolean = true;
+		/** @private */ private static var _inputTime:Object = {};
 	}
 }
