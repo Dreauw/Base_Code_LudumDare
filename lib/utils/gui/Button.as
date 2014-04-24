@@ -63,7 +63,7 @@ package utils.gui {
 				case 3:
 					shape.graphics.beginFill(0xFFFFFF, 0.2);
 					shape.graphics.drawRect(5, 5, width, 1);
-					shape.graphics.drawRect(5, 6, 1, height);
+					shape.graphics.drawRect(5, 6, 1, height-1);
 					shape.graphics.endFill();
 					shape.graphics.beginFill(0, 0.2);
 					shape.graphics.drawRect(5, 4+height, width-1, 1);
